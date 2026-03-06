@@ -1,0 +1,55 @@
+{
+    "name": "@saiko-wallet/desktop",
+    "version": "0.1.1",
+    "description": "Saiko Wallet — decentralized wallet for the Saiko Inu ecosystem (Windows/macOS/Linux)",
+    "private": true,
+    "type": "module",
+    "main": "electron/dist/main.js",
+    "scripts": {
+        "dev": "vite",
+        "dev:electron": "concurrently -k \"cross-env ELECTRON_DEV=true vite\" \"wait-on http://localhost:3000 && cross-env ELECTRON_DEV=true electron .\"",
+        "build": "tsc --noEmit && vite build",
+        "build:electron": "tsc --project tsconfig.electron.json && tsc --project tsconfig.preload.json",
+        "dist": "npm run build && npm run build:electron && electron-builder",
+        "dist:win": "npm run build && npm run build:electron && electron-builder --win",
+        "dist:mac": "npm run build && npm run build:electron && electron-builder --mac",
+        "dist:linux": "npm run build && npm run build:electron && electron-builder --linux",
+        "preview": "vite preview",
+        "lint": "echo 'lint placeholder'",
+        "clean": "rm -rf dist electron/dist release",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui",
+        "test:e2e:headed": "playwright test --headed",
+        "test:e2e:setup": "npx tsx e2e/generate-fixture.ts"
+    },
+    "dependencies": {
+        "@saiko-wallet/ui-kit": "*",
+        "@saiko-wallet/wallet-core": "*",
+        "@walletconnect/utils": "^2.23.7",
+        "@walletconnect/web3wallet": "^1.16.1",
+        "electron-updater": "^6.8.3",
+        "framer-motion": "^12.34.5",
+        "lucide-react": "^0.576.0",
+        "qrcode.react": "^3.1.0",
+        "react": "^18.3.0",
+        "react-dom": "^18.3.0",
+        "react-router-dom": "^6.26.0"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.58.2",
+        "@types/react": "^18.3.0",
+        "@types/react-dom": "^18.3.0",
+        "@vitejs/plugin-react": "^4.3.0",
+        "concurrently": "^9.0.0",
+        "cross-env": "^7.0.3",
+        "electron": "^35.7.5",
+        "electron-builder": "^25.0.0",
+        "png-to-ico": "^3.0.1",
+        "tsx": "^4.21.0",
+        "typescript": "*",
+        "vite": "*",
+        "wait-on": "^8.0.0"
+    },
+    "author": "Saiko Inu"
+}
+
