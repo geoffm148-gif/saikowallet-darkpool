@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# Turbo cache
+.turbo/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# SECURITY — never commit these
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+keystore/
+
+# Tauri
+packages/desktop/src-tauri/target/
+
+# React Native
+packages/mobile/ios/Pods/
+packages/mobile/android/.gradle/
+packages/mobile/android/app/build/
+
+# Large circuit trusted setup files (>100MB)
+packages/contracts/circuits/ptau/
