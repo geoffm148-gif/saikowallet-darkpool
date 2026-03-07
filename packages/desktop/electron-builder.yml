@@ -33,7 +33,7 @@ win:
       arch: [x64]
   icon: assets/icon.ico
   verifyUpdateCodeSignature: false
-  signAndEditExecutable: false
+  artifactName: Saiko.Wallet.Setup.${version}.${ext}
 
 mac:
   target:
@@ -56,3 +56,4 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
+  include: assets/installer.nsh
