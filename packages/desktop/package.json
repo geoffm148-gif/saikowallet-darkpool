@@ -1,6 +1,6 @@
 {
     "name":  "@saiko-wallet/desktop",
-    "version":  "0.1.3",
+    "version":  "0.1.4",
     "description":  "Saiko Wallet — decentralized wallet for the Saiko Inu ecosystem (Windows/macOS/Linux)",
     "private":  true,
     "type":  "module",
