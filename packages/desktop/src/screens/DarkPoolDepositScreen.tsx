@@ -81,19 +81,26 @@ export function DarkPoolDepositScreen(): React.ReactElement {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [depositStatus, setDepositStatus] = useState('');
 
   const tierAmount = selectedTier !== null ? (DARKPOOL_TIERS[selectedTier] ?? 0n) : 0n;
   const breakdown = selectedTier !== null ? formatDarkPoolFeeBreakdown(tierAmount) : null;
 
   async function handleConfirm(): Promise<void> {
-    if (selectedTier === null || !sessionMnemonic) return;
+    if (selectedTier === null) return;
+    if (!sessionMnemonic) {
+      addToast({ type: 'error', message: 'Wallet is locked. Please lock and unlock to re-authenticate.' });
+      return;
+    }
     setStep(3);
     setIsGenerating(true);
 
     try {
+      setDepositStatus('Generating commitment...');
       const secret = generateSecret();
       const nullifier = generateNullifier();
-      const commitment = await computeCommitment(secret, nullifier);
+      const commitment = computeCommitment(secret, nullifier);
+      setDepositStatus('Deriving viewing key...');
       const viewingKey = await deriveViewingKey(secret);
       const amountAfterFee = calculateAmountAfterFee(tierAmount);
 
@@ -105,6 +112,7 @@ export function DarkPoolDepositScreen(): React.ReactElement {
       const tierAmountWei = tierAmount * 10n ** 18n;
 
       // Check SAIKO balance (rpcCall with 4-endpoint fallback)
+      setDepositStatus('Checking SAIKO balance...');
       const balanceOfData = '0x70a08231' +
         ethers.AbiCoder.defaultAbiCoder().encode(['address'], [walletAddr]).slice(2);
       const balResult = await ethCall(SAIKO_TOKEN_ADDRESS, balanceOfData);
@@ -115,14 +123,34 @@ export function DarkPoolDepositScreen(): React.ReactElement {
         throw new Error(`Insufficient SAIKO balance. You have ${humanBalance.toLocaleString()} SAIKO but need ${humanNeeded} SAIKO for this tier.`);
       }
 
-      // Fetch nonce + gas in parallel
-      const [nonce, gasParams] = await Promise.all([
+      // Fetch nonce, gas params, and ETH balance in parallel
+      setDepositStatus('Checking ETH balance...');
+      const [nonce, gasParams, ethBalHex] = await Promise.all([
         getNonce(walletAddr),
         getGasParams(),
+        rpcCall<string>('eth_getBalance', [walletAddr, 'latest']),
       ]);
+
+      // Pre-flight: ensure wallet has enough ETH to cover approve + deposit gas
+      const ethBalance = BigInt(ethBalHex ?? '0x0');
+      const APPROVE_GAS = 65_000n;
+      const DEPOSIT_GAS = 1_300_000n; // ~1.07M actual + 20% buffer
+      const requiredEth = (APPROVE_GAS + DEPOSIT_GAS) * gasParams.maxFeePerGas;
+      if (ethBalance < requiredEth) {
+        const haveEth = (Number(ethBalance) / 1e18).toFixed(6);
+        const needEth = (Number(requiredEth) / 1e18).toFixed(6);
+        const shortfall = (Number(requiredEth - ethBalance) / 1e18 + 0.0005).toFixed(4);
+        throw new Error(
+          `Not enough ETH for gas fees.\n` +
+          `Have: ${haveEth} ETH  |  Need: ~${needEth} ETH\n` +
+          `Send at least ${shortfall} ETH to: ${walletAddr}`,
+        );
+      }
+
       let currentNonce = nonce;
 
       // 1. Approve SAIKO for DarkPool V2
+      setDepositStatus('Approving SAIKO spend...');
       const erc20Iface = new ethers.Interface([
         'function approve(address spender, uint256 amount) returns (bool)',
       ]);
@@ -134,10 +162,13 @@ export function DarkPoolDepositScreen(): React.ReactElement {
         gasLimit: 65_000n,
         ...gasParams,
       });
+      setDepositStatus('Waiting for approval tx...');
       await waitForReceipt(approveHash);
       currentNonce++;
 
       // 2. Deposit into DarkPool V2
+      setDepositStatus('Sending deposit tx...');
+      // Note: status updates to 'Waiting for deposit...' after hash is received
       const darkPoolIface = new ethers.Interface([
         'function deposit(bytes32 commitment, uint256 amount) external',
       ]);
@@ -149,6 +180,7 @@ export function DarkPoolDepositScreen(): React.ReactElement {
         gasLimit: 1_200_000n,
         ...gasParams,
       });
+      setDepositStatus(`Waiting for deposit to confirm... (${depositHash.slice(0, 10)})`);
       await waitForReceipt(depositHash);
 
       const note: DarkPoolNote = {
@@ -408,7 +440,7 @@ export function DarkPoolDepositScreen(): React.ReactElement {
                 fontSize: FONT_SIZE.sm,
                 color: COLORS.textMuted,
               }}>
-                Creating secret, nullifier, and commitment...
+                {depositStatus || 'Generating commitment...'}
               </div>
             </div>
           </motion.div>
