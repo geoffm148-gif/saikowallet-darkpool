@@ -99,7 +99,7 @@ export function DarkPoolDepositScreen(): React.ReactElement {
       setDepositStatus('Generating commitment...');
       const secret = generateSecret();
       const nullifier = generateNullifier();
-      const commitment = computeCommitment(secret, nullifier);
+      const commitment = await computeCommitment(secret, nullifier);
       setDepositStatus('Deriving viewing key...');
       const viewingKey = await deriveViewingKey(secret);
       const amountAfterFee = calculateAmountAfterFee(tierAmount);
