@@ -1,0 +1,38 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://127.0.0.1:3000",
+      "localStorage": [
+        {
+          "name": "saiko_wallet_created",
+          "value": "true"
+        },
+        {
+          "name": "saiko_wallet_address",
+          "value": "0x9858EfFD232B4033E47d90003D41EC34EcaEda94"
+        },
+        {
+          "name": "saiko_locked",
+          "value": "false"
+        },
+        {
+          "name": "saiko_recovery_verified",
+          "value": "true"
+        },
+        {
+          "name": "saiko_network",
+          "value": "mainnet"
+        },
+        {
+          "name": "saiko_accounts_state",
+          "value": "{\"wallets\":[{\"index\":0,\"name\":\"Account 1\",\"address\":\"0x9858EfFD232B4033E47d90003D41EC34EcaEda94\",\"derivationPath\":\"m/44'/60'/0'/0/0\",\"createdAt\":1704067200000,\"isDefault\":true}],\"activeIndex\":0,\"nextIndex\":1}"
+        },
+        {
+          "name": "saiko_keystore",
+          "value": "{\"version\":1,\"ciphertext\":\"eOlbPCemmBp0j+uBLXxT37duKW+5WXhFXjYIB/22Rwska58m+HmServAAqRjSAPZylkqm0gYMLmSvbTPcVTomn4rSWndKOEqsn63uuB2TP4yewdSmgaYipbFgc/uGLkGPk/SoSyDYs2159xUog==\",\"nonce\":\"iuCJfljIgx/NBACt0OYM7SHzo2+CKdRy\",\"salt\":\"nyPQ8jquvZiw1uPSscUP7g==\",\"kdfParams\":{\"algorithm\":\"argon2id\",\"memoryKb\":1024,\"iterations\":1,\"parallelism\":1}}"
+        }
+      ]
+    }
+  ]
+}
