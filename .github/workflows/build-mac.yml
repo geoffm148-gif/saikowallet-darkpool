@@ -1,0 +1,65 @@
+name: Build macOS
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        working-directory: packages/desktop
+        run: echo "VITE_WALLETCONNECT_PROJECT_ID=dcf41bc4edf0bf77f9c811c1e2299c9b" > .env.local
+
+      - name: Build renderer (Vite)
+        working-directory: packages/desktop
+        run: npx vite build
+
+      - name: Build Electron main + preload
+        working-directory: packages/desktop
+        run: |
+          npx tsc -p tsconfig.electron.json
+          npx tsc -p tsconfig.preload.json
+
+      - name: Build macOS DMG
+        working-directory: packages/desktop
+        run: npx electron-builder --mac --publish never
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload DMG to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            packages/desktop/release/*.dmg
+            packages/desktop/release/latest-mac.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload DMG as artifact (manual run)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: saiko-wallet-mac
+          path: |
+            packages/desktop/release/*.dmg
+            packages/desktop/release/latest-mac.yml
+          retention-days: 7

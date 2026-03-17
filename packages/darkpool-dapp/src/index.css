@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0A0A0A;
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    border-radius: 2px !important;
+  }
+}
+
+@layer components {
+  .btn-red {
+    @apply font-anton uppercase tracking-wider bg-red text-white px-6 py-3 text-sm cursor-pointer border-0 transition-all duration-150;
+    font-family: 'Anton', Impact, sans-serif;
+    letter-spacing: 0.1em;
+  }
+  .btn-red:hover {
+    @apply opacity-90;
+    transform: translateY(-1px);
+  }
+  .btn-red:active {
+    transform: translateY(0);
+  }
+  .btn-red:disabled {
+    @apply opacity-40 cursor-not-allowed;
+    transform: none;
+  }
+
+  .btn-outline {
+    @apply font-anton uppercase tracking-wider bg-transparent text-white px-6 py-3 text-sm cursor-pointer transition-all duration-150;
+    font-family: 'Anton', Impact, sans-serif;
+    letter-spacing: 0.1em;
+    border: 1px solid #333333;
+  }
+  .btn-outline:hover {
+    border-color: #E31B23;
+    color: #E31B23;
+  }
+
+  .card {
+    @apply bg-surface border border-border p-6;
+  }
+
+  .input-dark {
+    @apply bg-bg border border-border text-white px-4 py-3 w-full text-sm outline-none;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .input-dark:focus {
+    border-color: #E31B23;
+  }
+  .input-dark::placeholder {
+    color: #555;
+  }
+}

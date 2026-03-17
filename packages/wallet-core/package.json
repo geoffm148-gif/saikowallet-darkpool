@@ -1,0 +1,35 @@
+{
+  "name": "@saiko-wallet/wallet-core",
+  "version": "0.0.1",
+  "description": "Core wallet engine — key management, transaction building, encryption, RPC",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src tests",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "circomlibjs": "^0.1.7",
+    "ethers": "^6.13.0",
+    "hash-wasm": "^4.11.0",
+    "libsodium-wrappers": "^0.7.13"
+  },
+  "devDependencies": {
+    "@types/libsodium-wrappers": "^0.7.14",
+    "@vitest/coverage-v8": "^2.0.0",
+    "typescript": "*",
+    "vitest": "^2.0.0"
+  }
+}
